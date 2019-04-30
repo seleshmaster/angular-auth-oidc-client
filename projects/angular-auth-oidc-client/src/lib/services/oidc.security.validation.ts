@@ -267,7 +267,7 @@ export class OidcSecurityValidation {
             // kty	"RSA" use "sig"
             let amountOfMatchingKeys = 0;
             for (const key of jwtkeys.keys) {
-                if ((key.kty as string) === 'RSA' && (key.use as string) === 'sig') {
+                if ((key.kty as string) === 'RSA' ) {
                     amountOfMatchingKeys = amountOfMatchingKeys + 1;
                 }
             }
@@ -280,7 +280,7 @@ export class OidcSecurityValidation {
                 return false;
             } else {
                 for (const key of jwtkeys.keys) {
-                    if ((key.kty as string) === 'RSA' && (key.use as string) === 'sig') {
+                    if ((key.kty as string) === 'RSA' ) {
                         const publickey = KEYUTIL.getKey(key);
                         isValid = KJUR.jws.JWS.verify(id_token, publickey, ['RS256']);
                         if (!isValid) {

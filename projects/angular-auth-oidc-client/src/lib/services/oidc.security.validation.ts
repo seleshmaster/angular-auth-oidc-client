@@ -244,34 +244,34 @@ export class OidcSecurityValidation {
         if (!jwtkeys || !jwtkeys.keys) {
             return false;
         }
- 
+
         const header_data = this.tokenHelperService.getHeaderFromToken(id_token, false);
- 
+
         if (Object.keys(header_data).length === 0 && header_data.constructor === Object) {
             this.loggerService.logWarning('id token has no header data');
             return false;
         }
- 
+
         const kid = header_data.kid;
         const alg = header_data.alg;
- 
+
         if ('RS256' !== (alg as string)) {
             this.loggerService.logWarning('Only RS256 supported');
             return false;
         }
- 
+
         let isValid = false;
- 
+
         if (!header_data.hasOwnProperty('kid')) {
             // exactly 1 key in the jwtkeys and no kid in the Jose header
-            // kty  "RSA" use "sig"
+            // kty	"RSA" use "sig"
             let amountOfMatchingKeys = 0;
             for (const key of jwtkeys.keys) {
-                if ((key.kty as string) === 'RSA' && ((typeof key.use === 'undefined') || (key.use as string) === 'sig')){                 
-                        amountOfMatchingKeys = amountOfMatchingKeys + 1;                
+                if ((key.kty as string) === 'RSA' && ((typeof key.use === 'undefined') || (key.use as string) === 'sig')){  
+                    amountOfMatchingKeys = amountOfMatchingKeys + 1;
                 }
             }
- 
+
             if (amountOfMatchingKeys === 0) {
                 this.loggerService.logWarning('no keys found, incorrect Signature, validation failed for id_token');
                 return false;
@@ -280,13 +280,13 @@ export class OidcSecurityValidation {
                 return false;
             } else {
                 for (const key of jwtkeys.keys) {
-                    if ((key.kty as string) === 'RSA' && ((typeof key.use === 'undefined') || (key.use as string) === 'sig')) {                    
-                          const publickey = KEYUTIL.getKey(key);
-                          isValid = KJUR.jws.JWS.verify(id_token, publickey, ['RS256']);
-                          if (!isValid) {
-                              this.loggerService.logWarning('incorrect Signature, validation failed for id_token');
-                         }
-                         return isValid;                   
+                    if ((key.kty as string) === 'RSA' && ((typeof key.use === 'undefined') || (key.use as string) === 'sig')){  
+                        const publickey = KEYUTIL.getKey(key);
+                        isValid = KJUR.jws.JWS.verify(id_token, publickey, ['RS256']);
+                        if (!isValid) {
+                            this.loggerService.logWarning('incorrect Signature, validation failed for id_token');
+                        }
+                        return isValid;
                     }
                 }
             }
@@ -303,7 +303,7 @@ export class OidcSecurityValidation {
                 }
             }
         }
- 
+
         return isValid;
     }
 
